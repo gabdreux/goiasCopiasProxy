@@ -58,7 +58,7 @@ app.post('/proxy', async (req, res) => {
 
     res.json(response.data);
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -79,17 +79,17 @@ app.post('/proxy-mercado-pago-pix', async (req, res) => {
       
       res.status(response.status).json(response.data);
     } catch (error) {
-      console.error('Error making API request:', error.message);
+    //   console.error('Error making API request:', error.message);
       res.status(error.response ? error.response.status : 500).json({
         message: error.message,
       });
     }
-  });
+});
 
 
 
 
-  app.post('/proxy-card-to-token', async (req, res) => {
+app.post('/proxy-card-to-token', async (req, res) => {
     try {
       const { cardNumber, cardholderName, cardExpirationMonth, cardExpirationYear, securityCode, identificationType, identificationNumber } = req.body;
       const publicKey = req.query.publicKey;
@@ -119,16 +119,47 @@ app.post('/proxy-mercado-pago-pix', async (req, res) => {
         }
       );
   
+    //   console.log('Response from CARD TO TOKEN:', response.data);
       // Retornar a resposta da API para o cliente
       res.json(response.data);
     } catch (error) {
-      console.error(error);
+    //   console.error(error);
       res.status(error.response ? error.response.status : 500).json({ error: error.message });
     }
-  });
+});
 
 
 
+
+app.post('/proxy-mercado-pago-cc', async (req, res) => {
+    // Extrair o token de acesso do cabeçalho Authorization
+    const accessToken = req.headers['authorization'];
+    // console.log('Received Authorization Header:', accessToken);
+    if (!accessToken) {
+      return res.status(400).json({ error: 'Access token is required in the Authorization header' });
+    }
+  
+    // Corpo da requisição que será enviado para a API do Mercado Pago
+    const apiRequestBody = req.body;
+
+    // console.log('Received Request Body:', JSON.stringify(apiRequestBody, null, 2));
+  
+    try {
+      const response = await axios.post('https://api.mercadopago.com/v1/payments', apiRequestBody, {
+        headers: {
+          'Authorization': accessToken,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+    // console.log('Response from Mercado Pago API:', response.data);
+      // Enviar a resposta da API do Mercado Pago de volta para o cliente
+      res.status(response.status).json(response.data);
+    } catch (error) {
+    //   console.error('Error making API call:', error.response ? error.response.data : error.message);
+      res.status(error.response ? error.response.status : 500).json(error.response ? error.response.data : { error: 'Internal Server Error' });
+    }
+});
 
 
 
