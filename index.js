@@ -89,7 +89,43 @@ app.post('/proxy-mercado-pago-pix', async (req, res) => {
 
 
 
-
+  app.post('/proxy-card-to-token', async (req, res) => {
+    try {
+      const { cardNumber, cardholderName, cardExpirationMonth, cardExpirationYear, securityCode, identificationType, identificationNumber } = req.body;
+      const publicKey = req.query.publicKey;
+      const accessToken = req.headers['authorization'];
+  
+      // Configuração da requisição para a API do Mercado Pago
+      const response = await axios.post(
+        `https://api.mercadopago.com/v1/card_tokens?public_key=${publicKey}`,
+        {
+          card_number: cardNumber,
+          cardholder: {
+            name: cardholderName,
+            identification: {
+              type: identificationType || 'CPF',
+              number: identificationNumber
+            }
+          },
+          security_code: securityCode,
+          expiration_month: cardExpirationMonth,
+          expiration_year: cardExpirationYear
+        },
+        {
+          headers: {
+            'Authorization': accessToken,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+  
+      // Retornar a resposta da API para o cliente
+      res.json(response.data);
+    } catch (error) {
+      console.error(error);
+      res.status(error.response ? error.response.status : 500).json({ error: error.message });
+    }
+  });
 
 
 
