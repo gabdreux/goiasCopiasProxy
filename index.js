@@ -20,7 +20,7 @@ app.get('/test', function(req, res) {
     return res.json(responseData);
 });
 
-// Proxy endpoint
+
 app.post('/proxy', async (req, res) => {
   try {
     const { accessToken, cep, altura, largura, comprimento, peso } = req.body;
@@ -62,6 +62,41 @@ app.post('/proxy', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+
+
+app.post('/proxy-mercado-pago-pix', async (req, res) => {
+    const url = 'https://api.mercadopago.com/v1/payments';
+    try {
+      const response = await axios.post(url, req.body, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': req.headers['authorization'],
+          'X-Idempotency-Key': req.headers['x-idempotency-key'],
+        },
+      });
+      
+      res.status(response.status).json(response.data);
+    } catch (error) {
+      console.error('Error making API request:', error.message);
+      res.status(error.response ? error.response.status : 500).json({
+        message: error.message,
+      });
+    }
+  });
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
