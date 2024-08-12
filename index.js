@@ -34,7 +34,7 @@ app.post('/proxy', async (req, res) => {
       'https://www.melhorenvio.com.br/api/v2/me/shipment/calculate',
       {
         from: {
-          postal_code: '01002001',
+          postal_code: '74690900',
         },
         to: {
           postal_code: cep,
@@ -90,49 +90,6 @@ app.post('/proxy-mercado-pago-pix', async (req, res) => {
 
 
 
-// app.post('/proxy-card-to-token', async (req, res) => {
-//     try {
-//       const { cardNumber, cardholderName, cardExpirationMonth, cardExpirationYear, securityCode, identificationType, identificationNumber } = req.body;
-//       const publicKey = req.query.publicKey;
-//       const accessToken = req.headers['authorization'];
-  
-//       // Configuração da requisição para a API do Mercado Pago
-//       const response = await axios.post(
-//         `https://api.mercadopago.com/v1/card_tokens?public_key=${publicKey}`,
-//         {
-//           card_number: cardNumber,
-//           cardholder: {
-//             name: cardholderName,
-//             identification: {
-//               type: identificationType || 'CPF',
-//               number: identificationNumber
-//             }
-//           },
-//           security_code: securityCode,
-//           expiration_month: cardExpirationMonth,
-//           expiration_year: cardExpirationYear
-//         },
-//         {
-//           headers: {
-//             'Authorization': accessToken,
-//             'Content-Type': 'application/json'
-//           }
-//         }
-//       );
-  
-//     //   console.log('Response from CARD TO TOKEN:', response.data);
-//       // Retornar a resposta da API para o cliente
-//       res.json(response.data);
-//     } catch (error) {
-//     //   console.error(error);
-//       res.status(error.response ? error.response.status : 500).json({ error: error.message });
-//     }
-// });
-
-
-
-
-
 app.post('/proxy-card-to-token', async (req, res) => {
   try {
     // Obtenha o corpo da requisição
@@ -177,11 +134,6 @@ app.post('/proxy-card-to-token', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-
-
-
-
 
 
 
